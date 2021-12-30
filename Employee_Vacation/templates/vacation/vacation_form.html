@@ -1,0 +1,65 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="Houssien Chokor">
+	<meta name="generator" content="Jekyll v3.8.5">
+	<title>Signin - Employee Vacation</title>
+
+	<link href="{% static '/lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+	<link href="{% static '/lib/jquery/jquery-ui.min.css' %}" rel="stylesheet">
+	<link href="{% static '/css/signin.css' %}" rel="stylesheet">
+</head>
+
+<body class="text-center">
+	<form class="form-signin" method="POST" action="{% url form_url %}">
+		{% csrf_token %}
+		<h3 class="h3 mb-3 font-weight-bold py-2 bg-secondary text-nowrap">Add Vacation</h3>
+
+		<label for="description" class="sr-only">Description</label>
+		<input type="text" id="description" class="form-control first-input" placeholder="Description" name="description" value="{{vacation.description}}" required autofocus>
+
+		<label for="from_date" class="sr-only">From Date</label>
+		<input type="text" id="from_date" class="form-control datepicker" placeholder="from date" name="from_date" value="{{vacation.from_date|date:'Y-m-d'}}" required>
+
+		<label for="to_date" class="sr-only">To Date</label>
+		<input type="text" id="to_date" class="form-control datepicker" placeholder="to date" name="to_date" value="{{vacation.to_date|date:'Y-m-d'}}" required>
+
+		<label for="duration" class="sr-only">Duration</label>
+		<input type="text" id="duration" class="form-control last-input" placeholder="duration" name="duration" value="{{vacation.duration}}" required>
+
+		<button class="btn btn-lg btn-primary btn-block" type="button" onclick="check_duration();">Save</button>
+	</form>
+    <script src="{% static '/lib/jquery/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static '/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+	<script src="{% static '/lib/jquery/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript">
+        var check_duration = function () {
+            if( $('input[name=duration]').val() && parseInt($('input[name=duration]').val())>0 ) {
+                $('form').submit();
+            }
+        };
+        $(function() {
+            $(".datepicker").datepicker({
+                dateFormat: 'yy-mm-dd',
+                minDate: 0
+            }).on('change', function () {
+                var from_date = $('input[name=from_date]').val(),
+                    to_date = $('input[name=to_date]').val(),
+                    dur = 0;
+                
+                if( from_date && to_date && to_date>from_date ) {
+                    dur = ((new Date(to_date)).getTime() - (new Date(from_date)).getTime())/(1000*24*3600);
+                }
+                
+                $('input[name=duration]').val(dur);
+            });
+        });
+    </script>
+</body>
+</html>
